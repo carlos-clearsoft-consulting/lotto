@@ -1,0 +1,30 @@
+The following requests were from the images Inder sent me, which are stored in the inder_request folder.
+
+DONE1.  Most common # drawn (from date to date)
+DONE2.  Last time # was drawn
+    select drawdate from lotto649 where num1=x or num2=x or num3=x or num4=x or num5=x or num6=x order by drawdate desc
+    - clarification: this is fulfilled by 15. below.
+DONE3.  Duration between drawn # - clarification: this is really same as 2. above.  NOT NEEDED.
+4.  #s which come in ____ 3 or 5 times in a row
+5.  #s which does not come with common #
+DONE6.  #s with longest gap of no show - clarification: this is fulfilled by 2. above.  NOT NEEDED.
+DONE7.  most common pair (input 2 #'s, and return how many draws that occurred)
+DONE8.  most common triplet (same as pairs, but triplets).
+DONE9.  consecutive pair (a consecutive pair is two numbers in series, ie: 16,17.  He wants how many draws that occurred).
+DONE10. consecutive triplet (same as pairs but three numbers).
+DONE11.  odd #s per draw, (from date to date, what was the maximum number of odd #'s in any one draw).
+DONE12.  even #s per draw (same as odd #s per draw, except for even).
+DONE13.  winning #s, # of odd or even
+     Q: show that per draw, or overall (as a percentage of total draws, or the average number of odds and avg number of evens over all draws)?
+     - answer: this is the same as 11 and 12 above.  NOT NEEDED.
+DONE14.  hot #s (which is a # that has been drawn more than 3 or 4 times in the last 5 or 6 draws).
+	clarification:
+	what # was drawn more than 3 times in last 6 draws
+	what # was drawn more than 3 times in last 10 draws
+DONE15.  statistics sort by #
+     number | times drawn | last drawn
+     
+QUESTIONS NOT REQUIRING INPUTS:
+2, 6, 14, 15
+
+      
