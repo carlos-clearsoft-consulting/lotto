@@ -1,0 +1,1501 @@
+<html
+<head>
+<link rel="stylesheet" type="text/css" href="static/ext-3.2.1/resources/css/ext-all.css" />
+
+<script type="text/javascript" src="static/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="static/jquery.cookie.js"></script>
+<script type="text/javascript" src="static/ext-3.2.1/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="static/ext-3.2.1/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="static/ext-3.2.1/ext-all.js"></script>
+<script type="text/javascript" src="static/alasql.min.js"></script>
+<style type='text/css'>
+	.tftable{
+		width:100%;
+		border-collapse:collapse;
+		font:bold 12px Arial;
+	}
+	.tftable td{
+		padding:7px; border:#4e95f4 1px solid;
+	}
+	/* provide some minimal visual accomodation for IE8 and below */
+	/*
+	.tftable tr{
+		background: #b8d1f3;
+	}
+	*/
+	#hotnumberstable .content {
+		background: #ffe6e6;
+		bold 12px Arial;
+	}
+	#hotnumberstable2 .content {
+		background: #ffcccc;
+		bold 12px Arial;
+	}
+
+	#consecutiveseriestable2 .content {
+		background: #e2ffe0;
+		bold 12px Arial;
+	}
+	#consecutiveseriestable3 .content {
+		background: #e2ffe0;
+		bold 12px Arial;
+	}
+
+	#pairingseriestable2 .content {
+		background: #fffae0;
+		bold 12px Arial;
+	}
+	#pairingseriestable3 .content {
+		background: #fffae0;
+		bold 12px Arial;
+	}
+	#evenstable .content {
+		background: #ccf6ff;
+		bold 12px Arial;
+	}
+	#oddstable .content {
+		background: #e3faff;
+		bold 12px Arial;
+	}
+	.tableheader {
+		background: #000000;
+		color: #ffffff;
+	}
+
+	.numberformat {
+		text-align:right;
+	}
+	.controltext {
+		font-family:Helvetica;font-size:16px;font-style:normal;
+	}
+	#loadprogresstable {
+		border-collapse:collapse;
+		border: 1px solid black;
+	}
+	#loadprogresstable th td {
+		border: 1px solid black;
+	}
+	#loadprogresstable tr {
+		background-color:#ffff00;
+		border: 1px solid black;
+	}
+	#loadprogresstable td {
+		font:12px Arial;
+		padding:3px;
+		width:145px;
+	}
+	#mainnumberstable   td:nth-child(5) {
+		width:180px;
+	}
+</style>
+</head>
+<body>
+<center><font face='Helvetica' size=4><b>DRAW ANALYZER</b></font><br><br>
+<table id='mainnumberstable'>
+<tr><td valign='bottom'><div id='selrowdiv' style='font-family:Helvetica;font-size:15px;font-weight:bold;background-color:#ffff00;height:25px;padding:12px 0px 3px 12px;'/></td>
+	<td>&nbsp;</td>
+	<td>
+		<select id='drawdbselect'>
+			<option value='lotto649'><span class='controltext'>Lotto 649</span></option>
+			<option value='lottomax'><span class='controltext'>Lotto Max</span></option>
+			<option value='bc49'><span class='controltext'>BC 49</span></option>
+		</select>
+		<button id='drawdbchangebutton'><span style='controltext'>Change</span></button>
+		
+		
+	</td>
+	<td>&nbsp;</td>
+	<td>
+		<img src="/lt/static/clear.png" style="width:98px;height:1px;"/>
+		<a href='#' id='logoutlink'>Logout</a>
+	</td>
+</tr>
+<tr>
+	<td valign='top'><div style="border:1px solid #cccccc;">
+			<div id='alldrawsdiv'></div>
+			<div id='alldrawscontrolsdiv' />
+		</div>
+	</td>
+	<td>&nbsp;</td>
+	<td valign='top'><div style="border:1px solid #cccccc;">
+			<div id='drawnnumberstatsdiv'></div>
+			<div id='drawnnumberscontrolsdiv' />
+		</div>
+	</td>
+	<td>&nbsp;</td>
+	<td valign='top' >
+		<table id='loadprogresstable' ></table>
+	</td>
+</tr>
+</table>
+<table>
+<tr>
+	<td valign='top'>
+		<font face='Helvetica' size=2><b><u>Hot Numbers</u></b><font>
+		<br>
+		<div id='hotnumbersdiv' style='overflow-y:auto;width:350px;height:260px;border:1px solid #cccccc;'>
+			<table class="tftable" id="hotnumberstable">
+			</table>
+			<table class="tftable" id="hotnumberstable2">
+			</table>
+		</div>
+	</td>
+	<td>&nbsp;</td>
+	<td valign='top'>
+		<font face='Helvetica' size=2><b><u>Consecutive Series Numbers</u></b><font>
+		<br>
+		<div id='consecutiveseriesnumbersdiv' style='overflow-y:auto;width:640px;height:260px;border:1px solid #cccccc;'>
+			<table><tr>
+				<td valign='top'>
+					<table class="tftable" id="consecutiveseriestable3">
+					</table>
+				</td>
+				<td valign='top'>
+					<table class="tftable" id="consecutiveseriestable2" >
+					</table>
+				</td>
+			</tr></table>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td valign='top'>
+		<font face='Helvetica' size=2><b><u>Even/Odds</u></b><font>
+		<br>
+		<div style="border:1px solid #cccccc;">
+			<div id='evenodddivs' style='width:350px;height:236px;'>
+				<div id='odddiv' style='overflow-y:auto;width:350px;height:116px;border:1px solid #cccccc;'>
+					<table class='tftable' id='oddstable'></table>
+				</div>
+				<div id='evendiv' style='overflow-y:auto;width:350px;height:116px;border:1px solid #cccccc;'>
+					<table class='tftable' id='evenstable'></table>
+				</div>
+			</div>
+			<div id='evenoddcontrols'/>
+		</div>
+	</td>
+	<td>&nbsp;</td>
+	<td valign='top'>
+		<font face='Helvetica' size=2><b><u>Pairing Series Numbers</u></b><font>
+		<br>
+		<div id='pairingseriesnumbersdiv' style='overflow-y:auto;width:640px;height:260px;border:1px solid #cccccc;'>
+			<table><tr>
+				<td valign='top'>
+					<table class="tftable" id="pairingseriestable3">
+					</table>
+				</td>
+				<td valign='top'>
+					<table class="tftable" id="pairingseriestable2">
+					</table>
+				</td>
+			</tr></table>
+			
+		</div>
+	</td>
+</tr>
+</table>
+</center>
+<script language='javascript'>
+var curdb="lotto649";
+var drawsstore;
+var colmodel;
+var drawsgrid;
+var numbersstore;
+var colmodel2;
+var numbersgrid;
+var curdrawid="";
+var curdrawnum="";
+var curdrawdate="";
+var curdrawuserentered=false;
+ 
+
+
+var numbersdrawndata=[];
+
+function isValidDate(dateString) { // from: https://stackoverflow.com/questions/18758772/how-do-i-validate-a-date-in-this-format-yyyy-mm-dd-using-jquery
+  var regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(regEx)) return false;  // Invalid format
+  var d = new Date(dateString);
+  var dNum = d.getTime();
+  if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+  return d.toISOString().slice(0,10) === dateString;
+}
+
+
+
+function showAlert(tit,s,cbfn) {
+	function showAlert2(tit,s,cbfn) {
+		var p = {title:tit, msg:s, buttons: Ext.Msg.OK};
+		if (cbfn!=undefined) {
+			p.fn = cbfn;
+		}
+		Ext.Msg.show(p);
+	}
+	var ctp = Ext.getCmp("centertabpanel");
+	if (ctp==undefined) {
+		showAlert2(tit,s,cbfn);
+	} else {
+		if (ctp.activeTab.id=="servicelevelstab") {
+			alert(s);
+					if (cbfn!=undefined) {
+						cbfn();
+					}
+		} else {
+			//Ext.MessageBox.alert(tit, s);
+			showAlert2(tit,s,cbfn);
+		}
+	}
+}
+
+function emptyProgressTable() {
+	$('#loadprogresstable').empty();
+	addToLoadProgress("<b>LOAD PROGRESS</b>");
+}
+
+function addToLoadProgress(s) {
+	setTimeout(function(){
+		var tr = $('<tr><td>'+s+'</td></tr>');
+		$('#loadprogresstable').append(tr);
+		var c = $('#loadprogresstable tr').length;
+		if (c==10) {
+			var tr = $('<tr><td><b>Finished Loading</b></td></tr>');
+			$('#loadprogresstable').append(tr);
+		}
+	},200);
+}
+
+function doGet(tourl,successfn) {
+	console.log('calling doGet, tourl=',tourl);
+	if (tourl.indexOf("?")==-1) {
+		var u = tourl + "?"; 
+	} else {
+		var u = tourl + "&"; 
+	}
+	$.ajax({
+		url: u + "junk="+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('success in doGet, tourl='+tourl);
+			successfn(x);
+		},
+		error:function(data) {
+			console.log('error in doGet, tourl='+tourl);
+			setTimeout(function(){ 
+				doGet(tourl,successfn);
+			},2000);
+		}
+	});
+}
+
+function doGetNumbersDrawnDates(fromdt,todt,cbfn) {
+	function success(x) {
+			var t = JSON.parse(x);
+			var timesdrawn = t['TIMESDRAWN'];
+			var data = t['DATA'];
+			var maxnum=50;
+			if (curdb=='lottomax') {
+				maxnum=51;
+			}
+			for (var i=1;i<maxnum;i++) {
+				var si = i + "";
+				var lastdt = "";
+				var rec = data[si];
+				if (rec.length>0) {
+					lastdt = rec[0];
+				}
+				var arr = [si,timesdrawn[si],lastdt];
+				numbersdrawndata.push(arr);
+			}
+			addToLoadProgress('Loaded Number Stats');
+			if (cbfn) {
+				cbfn();
+			}
+	}
+	doGet('/lt/getNumbersDrawnDates?db='+curdb+'&fromdate='+fromdt+'&todate='+todt,success);
+	/*
+	$.ajax({
+		url: '/lt/getNumbersDrawnDates?db='+curdb+'&fromdate='+fromdt+'&todate='+todt+'&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('success in doGetNumbersDrawnDates');
+			var t = JSON.parse(x);
+			var timesdrawn = t['TIMESDRAWN'];
+			var data = t['DATA'];
+			for (var i=1;i<50;i++) {
+				var si = i + "";
+				var lastdt = "";
+				var rec = data[si];
+				if (rec.length>0) {
+					lastdt = rec[0];
+				}
+				var arr = [si,timesdrawn[si],lastdt];
+				numbersdrawndata.push(arr);
+			}
+			addToLoadProgress('Loaded Number Stats');
+			if (cbfn) {
+				cbfn();
+			}
+		},
+		error:function(data) {
+			console.log('error in doGetNumbersDrawnDates');
+			setTimeout(function(){ 
+				doGetNumbersDrawnDates(fromdt,todt,cbfn);
+			},2000);
+		}
+	});
+	*/
+}
+
+function getNumbersDrawn(fromdt,todt,cbfn) {
+	numbersstore.loadData([],false);
+	numbersdrawndata=[];
+	/*
+	var u = '/lt/getNumbersDrawnDates?db='+curdb+'&fromdate='+fromdt+'&todate='+todt+'&junk='+Math.random();
+	console.log(u);
+	$.get(u,function(x){
+		var t = JSON.parse(x);
+		var timesdrawn = t['TIMESDRAWN'];
+		var data = t['DATA'];
+		for (var i=1;i<50;i++) {
+			var si = i + "";
+			var lastdt = "";
+			var rec = data[si];
+			if (rec.length>0) {
+				lastdt = rec[0];
+			}
+			var arr = [si,timesdrawn[si],lastdt];
+			numbersdrawndata.push(arr);
+		}
+		addToLoadProgress('Loaded Number Stats');
+		if (cbfn) {
+			cbfn();
+		}
+		
+	});
+	*/
+	doGetNumbersDrawnDates(fromdt,todt,cbfn);
+}
+
+
+function loadNumbersDrawnGrid() {
+	var fromdt = "";
+	var todt = "";
+	if (Ext.getCmp('nmd_checkalldates').getValue()==false) {
+		fromdt = Ext.getCmp('nmd_fromdate').getValue();
+		todt = Ext.getCmp('nmd_todate').getValue();
+		fromdt = jQuery.trim(fromdt);
+		todt = jQuery.trim(todt);
+		if (isValidDate(fromdt)==false) {
+			showAlert('Error','Invalid From Date');
+			return;
+		}
+		if (isValidDate(todt)==false) {
+			showAlert('Error','Invalid From Date');
+			return;
+		}
+		getNumbersDrawn(fromdt,todt,function(){
+			console.log('getNumbersDrawn, cbfn called');
+			numbersstore.loadData(numbersdrawndata,false);
+			
+		});
+	} else {
+		getNumbersDrawn("","",function(){
+			console.log('getNumbersDrawn, cbfn called');
+			numbersstore.loadData(numbersdrawndata,false);
+		});
+	}
+}
+
+function doGetAllLottoNumbers(cbfn) {
+	function succ(x) {
+		console.log('success in doGetAllLottoNumbers');
+		var arr = JSON.parse(x);
+		drawsstore.loadData(arr,false);
+		var ldb = getDbLabel();
+		setSelectedRowDiv('Loaded, '+ldb);
+		addToLoadProgress('Loaded Draws');
+		Ext.getCmp('dr_newdrawbutton').enable();
+		Ext.getCmp('dr_removedrawbutton').enable();
+		if (cbfn) {
+			cbfn();
+		}
+	}
+	doGet('/lt/getAllLottoNumbers?db='+curdb,succ);
+	/*
+	$.ajax({
+		url: '/lt/getAllLottoNumbers?db='+curdb+'&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('success in doGetAllLottoNumbers');
+			var arr = JSON.parse(x);
+			drawsstore.loadData(arr,false);
+			var ldb = getDbLabel();
+			setSelectedRowDiv('Loaded, '+ldb);
+			addToLoadProgress('Loaded Draws');
+			Ext.getCmp('dr_newdrawbutton').enable();
+			Ext.getCmp('dr_removedrawbutton').enable();
+			if (cbfn) {
+				cbfn();
+			}
+		},
+		error:function(data) {
+			console.log('error in doGetAllLottoNumbers');
+			setTimeout(function(){
+				doGetAllLottoNumbers(cbfn);
+			},2000);
+		}
+	});
+	*/
+}
+
+function loadDraws(cbfn) {
+	var ldb = getDbLabel();
+	setSelectedRowDiv('Loading... '+ldb);
+	Ext.getCmp('dr_newdrawbutton').disable();
+	Ext.getCmp('dr_removedrawbutton').disable();
+	drawsstore.loadData([],false);
+	/*
+	$.get('/lt/getAllLottoNumbers?db='+curdb+'&junk='+Math.random(),function(x){
+		var arr = JSON.parse(x);
+		drawsstore.loadData(arr,false);
+		setSelectedRowDiv('Loaded, '+ldb);
+		addToLoadProgress('Loaded Draws');
+		Ext.getCmp('dr_newdrawbutton').enable();
+		Ext.getCmp('dr_removedrawbutton').enable();
+		if (cbfn) {
+			cbfn();
+		}
+	});
+	*/
+	doGetAllLottoNumbers(cbfn);	
+}
+
+function doRemoveDraw(curdrawid) {
+	$.ajax({
+		url: '/lt/removeDraw?db='+curdb+'&id='+curdrawid+'&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			if (x=='OK') {
+					curdrawid="";
+					curdrawnum="";
+					curdrawdate="";
+					curdrawuserentered=false;
+					setSelectedRowDiv("");
+					emptyProgressTable();
+					loadDraws(function(){						
+						showAlert('Info','Removed and grid reloaded',function(){
+							// see the New Draw code for why there are timeouts here.
+							setTimeout(function(){
+								loadNumbersDrawnGrid();
+								showHotNumbers();
+								showConsecutiveSeries();
+								showOddEvens();
+								showPairingSeries();
+							},200);
+						});
+					});
+			} else {
+					showAlert('Error','Some problem removing draw, call Carlos!');
+			}
+		},
+		error:function(data) {
+			console.log('error in doRemoveDraw');
+			setTimeout(function(){
+				doRemoveDraw();
+			},2000);
+		}
+	});
+}
+
+function removeDraw() {
+	if (curdrawid=="") {
+		showAlert('Info','Please choose a draw to remove');
+		return;
+	}
+	if (curdrawuserentered==false) {
+		showAlert('Info','This draw may not be removed as it was part of the initial data import from LottoBC.');
+		return;
+	}
+	Ext.MessageBox.confirm('Confirm Delete','Please confirm to delete this draw #' + curdrawnum + ', on date ' + curdrawdate,function(b){
+		if (b=="yes") {
+			/*
+			$.get('/lt/removeDraw?db='+curdb+'&id='+curdrawid+'&junk='+Math.random(),function(x) {
+				if (x=='OK') {
+					curdrawid="";
+					curdrawnum="";
+					curdrawdate="";
+					curdrawuserentered=false;
+					setSelectedRowDiv("");
+					emptyProgressTable();
+					loadDraws(function(){						
+						showAlert('Info','Removed and grid reloaded',function(){
+							// see the New Draw code for why there are timeouts here.
+							setTimeout(function(){
+								loadNumbersDrawnGrid();
+								showHotNumbers();
+								showConsecutiveSeries();
+								showOddEvens();
+								showPairingSeries();
+							},200);
+						});
+					});
+				} else {
+					showAlert('Error','Some problem removing draw, call Carlos!');
+				}
+			});
+			*/
+			doRemoveDraw(curdrawid);
+			
+		}
+	});
+}
+
+function setSelectedRowDiv(s) {
+	$('#selrowdiv').html(s);
+}
+
+function setSelectedDrawMsg(drawnum,drawdate) {
+	setSelectedRowDiv('Selected draw #' + drawnum + ', date: ' + drawdate);
+}
+
+function doAddNewDraw(surl) {
+	$.ajax({
+		url: surl+'&junk='+Math.random(),
+		type:'GET',
+		success:function(z){
+			if (z.indexOf("|")>-1) {
+						var zl = z.split("|");
+						if (zl[0]=='OK') {
+							setTimeout(function(){
+								drawwindow.hide();
+								showAlert('Info','Added',function(){
+									emptyProgressTable();
+									loadDraws(function(){
+										var g = Ext.getCmp('drawsgrid');
+										var selmodel = g.getSelectionModel();
+										selmodel.clearSelections();
+										var st = g.getStore();
+										var cnt = st.getCount();
+										for (var i=0;i<cnt;i++) {
+											var r = st.getAt(i);
+											if (r.data['rid']==curdrawid) {
+												selmodel.selectRow(i);
+												var vv = g.getView();
+												var vr = vv.getRow(i);
+												vr.scrollIntoView();
+												setSelectedDrawMsg(curdrawnum,curdrawdate)
+												break;
+											}
+										}
+										setTimeout(function(){ // these things are browser intensive, you get better performance by not tightly binding it to the GET event, so put it on  a timeout.
+											loadNumbersDrawnGrid();
+											showHotNumbers();
+											showConsecutiveSeries();									
+											showOddEvens();
+											showPairingSeries(); 
+										},200);
+										 
+
+									});
+								});
+							},400);
+							curdrawid=zl[1];
+							curdrawnum=zl[2];
+							curdrawdate=Ext.getCmp('nd_date').getValue();
+							curdrawuserentered=true;
+							
+						}
+					} else {
+						showAlert('Error',z);
+					}
+		},
+		error:function(data) {
+			console.log('error in doAddNewDraw');
+			setTimeout(function(){
+				doAddNewDraw(surl);
+			},2000);
+		}
+	});
+}
+
+function newDraw() {
+	curdrawid=""; curdrawnum=""; curdrawdate="";curdrawuserentered=false;
+	setSelectedRowDiv("");
+	var g = Ext.getCmp('drawsgrid');
+	var selmodel = g.getSelectionModel();
+	/*
+	var oldrec = selmodel.getSelected();
+	selmodel.deselectRow(oldrec);
+	*/
+	selmodel.clearSelections();
+
+	var its = [{xtype:'container',layout:'hbox',width:200,height:25,items:[
+					{xtype:'label',text:'Draw Date:'},
+					{xtype:'spacer',width:8,height:0},
+					{xtype:'textfield',id:'nd_date',width:80}
+				]},
+				{xtype:'spacer',height:5,width:0}
+				]
+	for (var i=1;i<7;i++) {
+		var fid = 'nd_n'+i;
+		var t = {xtype:'container',layout:'hbox',width:200,height:25,items:[
+						{xtype:'label',text:'Number (' + i + '):'},
+						{xtype:'spacer',width:8,height:0},
+						{xtype:'textfield',id:fid,width:40}
+					]
+				};
+			its.push(t);
+	}
+	its.push({xtype:'spacer',height:12,width:0});
+	its.push({xtype:'container',layout:'hbox',width:200,height:25,items:[
+			{xtype:'spacer',width:93,height:0},
+			{xtype:'button',text:'Add New',id:'nd_addnewbutton',handler:function(){
+				var dt = Ext.getCmp('nd_date').getValue();
+				if (isValidDate(dt)==false) {
+					showAlert('Error','Invalid date, format is: yy-mm-dd');
+					return;
+				}
+				var g = Ext.getCmp('drawsgrid');
+				var st = g.getStore();
+				var cnt = st.getCount();
+				for (var i=0;i<cnt;i++) {
+					var r = st.getAt(i);
+					if (r.data['date']==dt) {
+						showAlert('Error','A draw with the same date already exists');
+						return;
+					}
+				}
+				var s = "/lt/addNewDraw?db="+curdb+"&date="+dt;
+				for (var i=1;i<7;i++) {
+					var x = Ext.getCmp('nd_n'+i).getValue();
+					var n = parseInt(x);
+					if (isNaN(n)) {
+						showAlert('Error','One of the entries is not a number.');
+						return;
+					}
+					if (n<0 || n>49) {
+						showAlert('Error','No number must be less than 0 or greater than 49.');
+						return;
+					}
+					s = s + "&num"+i+"="+n;
+				}
+				//s = s + "&junk=" + Math.random();
+				/*
+				$.get(s,function(z) {
+					if (z.indexOf("|")>-1) {
+						var zl = z.split("|");
+						if (zl[0]=='OK') {
+							setTimeout(function(){
+								drawwindow.hide();
+								showAlert('Info','Added',function(){
+									emptyProgressTable();
+									loadDraws(function(){
+										var g = Ext.getCmp('drawsgrid');
+										var selmodel = g.getSelectionModel();
+										selmodel.clearSelections();
+										var st = g.getStore();
+										var cnt = st.getCount();
+										for (var i=0;i<cnt;i++) {
+											var r = st.getAt(i);
+											if (r.data['rid']==curdrawid) {
+												selmodel.selectRow(i);
+												var vv = g.getView();
+												var vr = vv.getRow(i);
+												vr.scrollIntoView();
+												setSelectedDrawMsg(curdrawnum,curdrawdate)
+												break;
+											}
+										}
+										setTimeout(function(){ // these things are browser intensive, you get better performance by not tightly binding it to the GET event, so put it on  a timeout.
+											loadNumbersDrawnGrid();
+											showHotNumbers();
+											showConsecutiveSeries();									
+											showOddEvens();
+											showPairingSeries(); 
+										},200);
+										 
+
+									});
+								});
+							},400);
+							curdrawid=zl[1];
+							curdrawnum=zl[2];
+							curdrawdate=Ext.getCmp('nd_date').getValue();
+							curdrawuserentered=true;
+							
+						}
+					} else {
+						showAlert('Error',z);
+					}
+				});
+				*/
+				doAddNewDraw(s);
+
+			}}
+		]});
+
+	var drawwindow = new Ext.Window({
+			title:'Add New Draw',
+			layout:'vbox',
+			bodyStyle:'margin:1px;padding:4px;',
+			resizable:false,
+			style: 'background-color:#cccccc;color:#000000;',
+			modal:true,
+			height:260,width:180,
+			closeAction:'hide',
+			closable:true,
+			items:its
+	});
+	drawwindow.show();
+}
+
+function addToTableSeries(tblname,countobj) {
+	var kys = Object.keys(countobj);
+	var timesdrawnA=[];
+	var timesdrawnD={};
+	for (var i=0;i<kys.length;i++) {
+		var s = kys[i];
+		var d = countobj[s];
+		var cnt = d['COUNT'];
+		if (timesdrawnA.indexOf(cnt)==-1) {
+			timesdrawnA.push(cnt);
+			var arr=[];
+		} else {
+			var arr = timesdrawnD[cnt];
+		}
+		arr.push(s);
+		timesdrawnD[cnt]=arr;
+	}
+	//timesdrawnA.sort().reverse(); // gotcha! Javascript array sorts are always alphabetical!
+	timesdrawnA.sort((a,b) => b - a);
+	for (var i=0;i<timesdrawnA.length;i++) {
+		var cnt = timesdrawnA[i];
+		var arr = timesdrawnD[cnt];
+		for (var j=0;j<arr.length;j++) {
+			var s = arr[j];
+			var d = countobj[s];
+			var dt = d['DATE'];
+			var r = $('<tr class="content"><td>'+s+'</td><td class="numberformat">'+cnt+'</td><td>'+dt+'</td></tr>');
+			$('#'+tblname).append(r);
+		}
+	}
+}
+
+
+
+
+function showSeries(title,target,arr){
+		var tbl = $('#'+target);
+		var header = $('<tr class="tableheader"><td>'+title+'</td><td>Times Drawn</td><td>Last Drawn Date</td></tr>');
+		tbl.append(header);
+		for (var i=0;i<arr.length;i++) {
+			var aa = arr[i];
+			var r = $('<tr class="content"><td>'+aa[0]+'</td><td class="numberformat">'+aa[1]+'</td><td>'+aa[2]+'</td></tr>');
+			tbl.append(r);
+		}
+}
+
+
+function doGetPairingSeries() {
+	function succit(x) {
+		function succit2(y) {
+			console.log('succit2 success');
+			var arr2 = JSON.parse(y);
+			showSeries('Pattern Triplet','pairingseriestable3',arr2);
+			addToLoadProgress('Loaded Pairing Series');
+		}
+		console.log('succit success');
+		var arr = JSON.parse(x);
+		showSeries('Pattern Pair','pairingseriestable2',arr);
+		doGet('/lt/getPairingSeries?db='+curdb+'&pattern=triple',succit2);
+	}
+	doGet('/lt/getPairingSeries?db='+curdb+'&pattern=pair',succit);
+	/*
+	$.ajax({
+		url: '/lt/getPairingSeries?db='+curdb+'&pattern=pair&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('success in doGetPairingSeries');
+			var arr = JSON.parse(x);
+			showSeries('Pattern Pair','pairingseriestable2',arr);
+			$.get('/lt/getPairingSeries?db='+curdb+'&pattern=triple&junk='+Math.random(),function(y){
+				console.log('success in doGetPairingSeries');
+				var arr2 = JSON.parse(y);
+				showSeries('Pattern Triplet','pairingseriestable3',arr2);
+				addToLoadProgress('Loaded Pairing Series');
+			});
+		},
+		error:function(data) {
+			console.log('error in doGetPairingSeries');
+			setTimeout(function(){
+				doGetPairingSeries();
+			},2000);
+		}
+	});
+	*/
+}
+ 
+
+function showPairingSeries(){
+	$('#pairingseriestable2').empty();
+	$('#pairingseriestable3').empty();
+	setTimeout(function(){
+		/*
+		$.get('/lt/getPairingSeries?db='+curdb+'&pattern=pair&junk='+Math.random(),function(x){
+				var arr = JSON.parse(x);
+				showSeries('Pattern Pair','pairingseriestable2',arr);
+				$.get('/lt/getPairingSeries?db='+curdb+'&pattern=triple&junk='+Math.random(),function(y){
+					var arr2 = JSON.parse(y);
+					showSeries('Pattern Triplet','pairingseriestable3',arr2);
+					addToLoadProgress('Loaded Pairing Series');
+				});
+			});
+		*/
+		doGetPairingSeries();
+		},2000);
+}
+
+ 
+
+function showConsecutiveSeries() {
+	$('#consecutiveseriestable2').empty();
+	$('#consecutiveseriestable3').empty();
+	setTimeout(function(){
+		var g = Ext.getCmp('drawsgrid');
+		var st = g.getStore();
+		var cnt = st.getCount();
+		var flds = ['num1','num2','num3','num4','num5','num6'];
+		var dat2={};
+		var dat3={};
+		for (var i=0;i<cnt;i++) {
+			var rec = st.getAt(i);
+			var dt = rec.data['date'];
+			var arr=[]
+			for (var j=0;j<6;j++) {
+				arr.push(rec.data[flds[j]]);
+			}
+			/* arr.sort(); // gotcha! javascript array sorts are always alphabetical! */
+			arr.sort((a, b) => a - b);
+			for (var z=1;z<arr.length;z++) { // consecutive pairs
+				var p = arr[z-1];
+				var q = arr[z];
+				if ((q-p)==1) {
+					var s = p + "-" + q;
+					var kys = Object.keys(dat2);
+					if (kys.indexOf(s)>-1) {
+						var d = dat2[s];
+						d['COUNT']=d['COUNT']+1;
+					} else {
+						var d = {'COUNT':1,'DATE':dt};
+					}
+					dat2[s]=d;
+				}
+			}
+			for (var z=2;z<arr.length;z++) { // consecutive triples
+				var p = arr[z-2];
+				var q = arr[z-1];
+				var r = arr[z];
+				if (((q-p)==1) && ((r-q)==1)) {
+					var s = p + "-" + q + "-" + r;
+					var kys = Object.keys(dat3);
+					if (kys.indexOf(s)>-1) {
+						var d = dat3[s];
+						d['COUNT']=d['COUNT']+1;
+					} else {
+						var d = {'COUNT':1,'DATE':dt};
+					}
+					dat3[s]=d;
+				}
+			}
+		}
+		var header = $('<tr class="tableheader"><td>Consecutive Triplet</td><td>Times Drawn</td><td>Last Drawn Date</td></tr>');
+		$('#consecutiveseriestable3').append(header);
+		addToTableSeries('consecutiveseriestable3',dat3);
+		addToLoadProgress('Loaded Consecutive Series Pairs');
+		var header2 = $('<tr class="tableheader"><td>Consecutive Pair</td><td>Times Drawn</td><td>Last Drawn Date</td></tr>');
+		$('#consecutiveseriestable2').append(header2);
+		addToTableSeries('consecutiveseriestable2',dat2);
+		addToLoadProgress('Loaded Consecutive Series Triplets');
+	},1500);	
+}
+
+function doGetSequentialDrawHotNumbers() {
+	function suc(x) {
+						console.log('suc success doGetSequentialDrawHotNumbers');
+						var d = JSON.parse(x);
+						if (d['OK']==false) {
+							showAlert("Error",d['MSG']);
+							return;
+						}
+						var rs = d['DATA'];
+						for (var i=0;i<rs.length;i++) {
+							var r = rs[i];
+							var hnum = r[0];
+							var seqcount = r[1];
+							var fromdate = r[2];
+							var todate = r[3];
+							var row = $('<tr class="content"><td class="numberformat">'+hnum+'</td><td class="numberformat">'+seqcount+'</td><td>'+fromdate+'</td><td>'+todate+'</td></tr>');
+							$('#hotnumberstable2').append(row);
+						}
+						addToLoadProgress('Loaded Hot Numbers Consecutive Draws');
+	}
+	doGet('/lt/sequentialDrawHotNumbers',suc);
+	/*
+	$.ajax({
+		url: '/lt/sequentialDrawHotNumbers?junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('scuccess in doGetSequentialDrawHotNumbers');
+						var d = JSON.parse(x);
+						if (d['OK']==false) {
+							showAlert("Error",d['MSG']);
+							return;
+						}
+						var rs = d['DATA'];
+						for (var i=0;i<rs.length;i++) {
+							var r = rs[i];
+							var hnum = r[0];
+							var seqcount = r[1];
+							var fromdate = r[2];
+							var todate = r[3];
+							var row = $('<tr class="content"><td class="numberformat">'+hnum+'</td><td class="numberformat">'+seqcount+'</td><td>'+fromdate+'</td><td>'+todate+'</td></tr>');
+							$('#hotnumberstable2').append(row);
+						}
+						addToLoadProgress('Loaded Hot Numbers Consecutive Draws');
+		},
+		error:function(data) {
+			console.log('error in doGetSequentialDrawHotNumbers');
+			setTimeout(function(){
+				doGetSequentialDrawHotNumbers();
+			},2000);
+		}
+	});
+	*/
+}
+
+function showHotNumbers() {
+	function addToCount(countobj,val,dt) {
+		val = val + "";
+		var kys =  Object.keys(countobj);
+		if (kys.indexOf(val)>-1) {
+			var d = countobj[val];
+			d['COUNT'] = d['COUNT']+1;
+		} else {
+			var d = {'COUNT':1,'DATE':dt};
+		}
+		countobj[val]=d;
+		return countobj;
+	}
+	function addToTable(countobj,temptablename,cbfn) {
+		alasql.exec('CREATE TABLE   IF NOT EXISTS  ' + temptablename + ' (hnum INT, cnt INT, dt STRING)');
+		alasql.exec('DELETE FROM ' + temptablename);
+		var kys = Object.keys(countobj);
+		for (var i=0;i<kys.length;i++) {
+			var num = kys[i];
+			var d = countobj[num];
+			var cnt = d['COUNT'];
+			if (cnt<3) {
+				continue;
+			}
+			var dt = d['DATE'];
+			//insert([num,cnt,dt]);
+			alasql("INSERT INTO " + temptablename + " (hnum,cnt,dt) values (" + num + "," + cnt + ",'" + dt + "')");
+			//var r = $('<tr class="content"><td class="numberformat">'+num+'</td><td class="numberformat">'+cnt+'</td><td>'+dt+'</td></tr>');
+			//$('#hotnumberstable').append(r);
+		}
+		//tempdb.exec('SELECT hnum,cnt,dt FROM hnums ORDER BY cnt, dt DESC',function(res) {
+		//	console.log(res.length);
+		//});
+		alasql.promise('SELECT hnum,cnt,dt FROM ' + temptablename + ' ORDER BY cnt DESC, dt DESC').then(
+			function(res) {
+				console.log('select ' + temptablename + ', returns count=' + res.length);
+				for (var i=0;i<res.length;i++) {
+					var rec = res[i];
+					var r = $('<tr class="content"><td class="numberformat">'+rec['hnum']+'</td><td class="numberformat">'+rec['cnt']+'</td><td>'+rec['dt']+'</td></tr>');
+					$('#hotnumberstable').append(r);
+				}
+				if (cbfn) {
+					cbfn();
+				}
+			}).catch(function(err){
+				console.log('error in promise of SELECT');
+			});
+	}
+	$('#hotnumberstable').empty();
+	$('#hotnumberstable2').empty();
+	setTimeout(function(){
+			var g = Ext.getCmp('drawsgrid');
+			var st = g.getStore();
+			var cnt = st.getCount();
+			var last6 = {};
+			var last10 = {};
+			var flds = ['num1','num2','num3','num4','num5','num6'];
+			for (var i=0;i<10;i++) {
+				var r = st.getAt(i);
+				for (var z=0;z<6;z++) {
+					var fname = flds[z];
+					var val = r.data[fname];
+					last10 = addToCount(last10,val,r.data['date']);
+					if (i<6) {
+						last6 = addToCount(last6,val,r.data['date']);
+					}
+				}
+			}
+			var header = $('<tr class="tableheader"><td>Hot Number</td><td>Times Drawn Within Last 6 Draws</td><td>Last Drawn Date</td></tr>');
+			$('#hotnumberstable').append(header);
+			addToTable(last6,'t6',function(){
+				addToLoadProgress('Loaded Hot Numbers (6 Draws)');
+				var header2 = $('<tr class="tableheader"><td>Hot Number</td><td>Times Drawn Within Last 10 Draws</td><td>Last Drawn Date</td></tr>');
+				$('#hotnumberstable').append(header2);
+				addToTable(last10,'t10',function(){
+					addToLoadProgress('Loaded Hot Numbers (10 Draws)');
+					var tr = $('<tr class="tableheader"><td>Hot Number</td><td>Count Consecutive Draws</td><td>From Date</td><td>To Date</td></tr>');
+					$('#hotnumberstable2').append(tr);
+					/*
+					$.get('/lt/sequentialDrawHotNumbers?junk='+Math.random(),function(x){
+						var d = JSON.parse(x);
+						if (d['OK']==false) {
+							showAlert("Error",d['MSG']);
+							return;
+						}
+						var rs = d['DATA'];
+						for (var i=0;i<rs.length;i++) {
+							var r = rs[i];
+							var hnum = r[0];
+							var seqcount = r[1];
+							var fromdate = r[2];
+							var todate = r[3];
+							var row = $('<tr class="content"><td class="numberformat">'+hnum+'</td><td class="numberformat">'+seqcount+'</td><td>'+fromdate+'</td><td>'+todate+'</td></tr>');
+							$('#hotnumberstable2').append(row);
+						}
+						addToLoadProgress('Loaded Hot Numbers Consecutive Draws');
+					});
+					*/
+					doGetSequentialDrawHotNumbers();
+				});
+			});
+		},1500);
+	
+	
+	
+}
+
+function doGetOddsEvens(fromdt,todt) {
+	function suck(x) {
+		function showData(targettable,title,dat) {
+			var okys = Object.keys(dat);
+			var max_cnt = -1;
+			for (var i=0;i<okys.length;i++) {
+				var c = new Number(okys[i]);
+				if (c>max_cnt) {
+					max_cnt = c;
+				}
+			}
+			$('#'+targettable).empty();
+			var header = $('<tr class="tableheader"><td style="width:80px;">'+title+'</td><td>Draw Date</td></tr>');
+			$('#'+targettable).append(header);
+			while (max_cnt>0) {
+				var cs = max_cnt + "";
+				if (okys.indexOf(cs)>-1) {
+					var arr = dat[cs];
+					for (var j=0;j<arr.length;j++) {
+						var tr = $('<tr class="content"><td class="numberformat" style="width:80px;">'+cs+'</td><td>'+arr[j]+'</td></tr>');
+						$('#'+targettable).append(tr);
+					}
+				}
+				max_cnt = max_cnt - 1;
+			}
+		}
+		console.log('success in suck');
+		var t = JSON.parse(x);
+		var tod = t['ODDS'];
+		showData('oddstable','Odd #s',tod);
+		var tev = t['EVENS'];
+		showData('evenstable','Even #s',tev);
+		addToLoadProgress('Loaded Odds And Evens');
+	}
+	doGet('/lt/getOddsEvens?db='+curdb+'&fromdt='+fromdt+'&todt='+todt,suck);
+	/*
+	function showData(targettable,title,dat) {
+		var okys = Object.keys(dat);
+		var max_cnt = -1;
+		for (var i=0;i<okys.length;i++) {
+			var c = new Number(okys[i]);
+			if (c>max_cnt) {
+				max_cnt = c;
+			}
+		}
+		$('#'+targettable).empty();
+		var header = $('<tr class="tableheader"><td style="width:80px;">'+title+'</td><td>Draw Date</td></tr>');
+		$('#'+targettable).append(header);
+		while (max_cnt>0) {
+			var cs = max_cnt + "";
+			if (okys.indexOf(cs)>-1) {
+				var arr = dat[cs];
+				for (var j=0;j<arr.length;j++) {
+					var tr = $('<tr class="content"><td class="numberformat" style="width:80px;">'+cs+'</td><td>'+arr[j]+'</td></tr>');
+					$('#'+targettable).append(tr);
+				}
+			}
+			max_cnt = max_cnt - 1;
+		}
+	}
+	$.ajax({
+		url: '/lt/getOddsEvens?db='+curdb+'&fromdt='+fromdt+'&todt='+todt+'&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			console.log('success in doGetOddsEvens');
+			var t = JSON.parse(x);
+			var tod = t['ODDS'];
+			showData('oddstable','Odd #s',tod);
+			var tev = t['EVENS'];
+			showData('evenstable','Even #s',tev);
+			addToLoadProgress('Loaded Odds And Evens');
+		},
+		error:function(data) {
+			console.log('error in doGetOddsEvens');
+			setTimeout(function(){
+				doGetOddsEvens(fromdt,todt);
+			},2000);
+		}
+	});
+	*/
+}
+
+
+function showOddEvens() {
+	$('#oddstable').empty();
+	$('#evenstable').empty();
+	setTimeout(function(){
+		var c = Ext.getCmp('eo_checkalldates');
+		var dtfrom = "";
+		var dtto = "";
+		if (c.getValue()==false) {
+			dtfrom = Ext.getCmp('eo_fromdate').getValue();
+			dtto = Ext.getCmp('eo_todate').getValue();
+		} 
+		/*
+		$.get('/lt/getOddsEvens?db='+curdb+'&fromdt='+dtfrom+'&todt='+dtto+'&junk='+Math.random(),function(x){
+			var t = JSON.parse(x);
+			var tod = t['ODDS'];
+			showData('oddstable','Odd #s',tod);
+			var tev = t['EVENS'];
+			showData('evenstable','Even #s',tev);
+			addToLoadProgress('Loaded Odds And Evens');
+		});
+		*/
+		doGetOddsEvens(dtfrom,dtto); 
+	},1500);
+}
+
+function showInitData() {
+	emptyProgressTable();
+	loadDraws(function(){
+			showHotNumbers();
+			showConsecutiveSeries();
+			showPairingSeries();
+			showOddEvens();
+		});
+
+	getNumbersDrawn("","",function(){
+		numbersstore.loadData(numbersdrawndata,false);
+	});
+}
+
+function doAuthenticateUser(u,p) {
+	$.ajax({
+		url: '/lt/authenticateUser?u='+u+'&p='+p+'&junk='+Math.random(),
+		type:'GET',
+		success:function(x){
+			if (x=='OK') {
+				$.cookie('user',u,{expires:30});
+				$.cookie('pwd',p,{expires:30});
+				lwin.hide();
+				showInitData();
+			} else {
+				showAlert('Error','Wrong username, password.');
+			} 
+		},
+		error:function(data) {
+			console.log('error in doAuthenticateUser');
+			setTimeout(function(){
+				doAuthenticateUser(u,p);
+			},2000);
+		}
+	});
+}
+
+function doLogin() {
+	var lwin = new Ext.Window({
+			title:'Login',
+			layout:'hbox',
+			bodyStyle:'margin:1px;padding:2px;',
+			resizable:false,
+			style: 'background-color:#cccccc;color:#000000',
+			modal:true,
+			height:60,width:317,
+			closeAction:'hide',
+			closable:false,
+			items:[
+				{xtype:'label',text:'Username:'},
+				{xtype:'spacer',width:3,height:0},
+				{xtype:'textfield',id:'username',width:70},
+				{xtype:'spacer',width:6,height:0},
+				{xtype:'label',text:'Password:'},
+				{xtype:'spacer',width:3,height:0},
+				{xtype:'textfield',id:'passwd',inputType:'password',width:70},
+				{xtype:'spacer',width:6,height:0},
+				{xtype:'button',text:'Login',handler:function(){
+					var u = Ext.getCmp('username').getValue();
+					var p = Ext.getCmp('passwd').getValue();
+					/*
+					$.get('/lt/authenticateUser?u='+u+'&p='+p+'&junk='+Math.random(),function(x){
+						if (x=='OK') {
+							$.cookie('user',u,{expires:30});
+							$.cookie('pwd',p,{expires:30});
+							lwin.hide();
+							showInitData();
+						} else {
+							showAlert('Error','Wrong username, password.');
+						}
+					});
+					*/
+					doAuthenticateUser(u,p);
+				}}
+			]
+		});
+	lwin.show();
+}
+
+function getDbLabel() {
+	var s = "";
+	$('#drawdbselect option').each(function(){
+		if ($(this).val()==curdb) {
+			s = $(this).html();			
+		}
+	});
+	return s;
+}
+
+function setDrawsComponents(numcols) {
+	var dsflds = ['rid','count','date'];
+	var n = numcols+1;
+	for (var i=1;i<n;i++) {
+		dsflds.push('num'+i);
+	}
+	dsflds.push('userentered');
+	dsflds.push('space');
+	drawsstore = new Ext.data.SimpleStore({
+				 	 storeid:'drawsstore',id:'drawsstore',
+					 fields:dsflds,
+					 autoLoad:false,remoteSort:false,
+					 listeners:{
+						load:function(obj,recs,opt) {
+
+						}
+					 }
+				});
+	var cols = [{header:'Draw',dataIndex:'count',width:60,align:'right',sortable:true},
+				{header:'Date',dataIndex:'date',width:100,align:'center',sortable:true}];
+	for (var i=1;i<n;i++) {
+		cols.push({header:i+'',dataIndex:'num'+i,width:35,align:'right',sortable:true});
+	}
+	cols.push({header:'',dataIndex:'space',width:35});
+	colmodel = new Ext.grid.ColumnModel({
+							columns:cols,
+							defaultSortable:true
+		});
+
+	drawsgrid = new Ext.grid.GridPanel({
+				id:'drawsgrid',
+				store: drawsstore,
+				cm: colmodel,
+				renderTo:'alldrawsdiv',
+				width:440,
+				height:300,
+				title: 'Past Draws',
+				listeners: {
+					cellclick: function(grid, rowIndex, columnIndex, e) {
+						var selmodel = grid.getSelectionModel();
+						var rec = selmodel.getSelected();
+						curdrawid = rec.data['rid'];
+						curdrawnum = rec.data['count'];
+						curdrawdate = rec.data['date'];
+						curdrawuserentered = rec.data['userentered']==1;
+						setSelectedDrawMsg(curdrawnum,curdrawdate);
+					}
+				}
+			});
+}
+
+$(document).ready(function() {
+	Ext.onReady(function() {
+		setDrawsComponents(6);
+		numbersstore = new Ext.data.SimpleStore({
+							 storeid:'numbersstore',id:'numbersstore',
+							 fields:['number','timesdrawn','lastdrawdate','space'],
+							 autoLoad:false,remoteSort:false,
+							 listeners:{
+								load:function(obj,recs,opt) {
+
+								}
+							 }
+						});
+		 colmodel2 = new Ext.grid.ColumnModel({
+								columns:[
+									{header:'#',dataIndex:'number',width:35,align:'right',sortable:true},
+									{header:'Times Drawn',dataIndex:'timesdrawn',width:100,align:'right',sortable:true},
+									{header:'Last Draw Date',dataIndex:'lastdrawdate',width:100,align:'center',sortable:true},
+									{header:'',dataIndex:'spacer',width:35}
+								],
+								defaultSortable:true
+			});
+		 numbersgrid = new Ext.grid.GridPanel({
+					id:'numbersgrid',
+					store: numbersstore,
+					cm: colmodel2,
+					renderTo:'drawnnumberstatsdiv',
+					width:270,
+					height:300,
+					title: 'Number Stats',
+					listeners: {
+						cellclick: function(grid, rowIndex, columnIndex, e) {
+						}
+					}
+				});
+
+
+		var c = new Ext.Container({layout:'hbox',width:326,height:25,renderTo:'drawnnumberscontrolsdiv',items:[
+					{xtype:'label',html:"<span class='controltext'>All:</span>"},
+					{xtype:'checkbox',id:'nmd_checkalldates',checked:true
+											,listeners:{
+												check:function(o,b) {
+													if (o.getValue()==true) {
+														Ext.getCmp('nmd_fromdate').setReadOnly(true);
+														Ext.getCmp('nmd_todate').setReadOnly(true);
+														Ext.getCmp('nmd_fromdate').setValue("");
+														Ext.getCmp('nmd_todate').setValue("");
+													} else {
+														Ext.getCmp('nmd_fromdate').setReadOnly(false);
+														Ext.getCmp('nmd_todate').setReadOnly(false);
+													}
+												}
+
+											}
+					},
+					{xtype:'spacer',width:2,height:0},
+					{xtype:'label',html:"<span class='controltext'>Dt from:</span>"},
+					{xtype:'textfield',width:83,id:'nmd_fromdate',readOnly:true},
+					{xtype:'spacer',width:2,height:0},
+					{xtype:'label',html:"<span class='controltext'>to:</span>"},
+					{xtype:'textfield',width:83,id:'nmd_todate',readOnly:true},
+					{xtype:'spacer',width:4,height:0},
+					{xtype:'button',text:'Load',handler:function(){loadNumbersDrawnGrid();}}
+				]
+			});
+
+		var c2 = new Ext.Container({layout:'hbox',width:430,height:25,renderTo:'alldrawscontrolsdiv',items:[
+					{xtype:'button',text:'New Draw',id:'dr_newdrawbutton',handler:function(){newDraw();}},
+					{xtype:'spacer',width:30,height:0},
+					{xtype:'button',text:'Remove Draw',id:'dr_removedrawbutton',handler:function(){removeDraw();}},
+					{xtype:'spacer',width:30,height:0},
+					{xtype:'button',text:'Reload',handler:function(){
+						emptyProgressTable();
+						loadDraws(
+							function() {
+								//setSelectedRowDiv("");
+								loadNumbersDrawnGrid();
+								showHotNumbers();
+								showConsecutiveSeries();
+								showPairingSeries();
+								showOddEvens();
+								//showAlert('Info','Reloaded');
+							}
+					 );}}
+				]
+			});
+			
+		var c_evenodd = new Ext.Container({layout:'hbox',width:345,height:25,renderTo:'evenoddcontrols',items:[
+					{xtype:'label',html:"<span class='controltext'>All:</span>"},
+					{xtype:'checkbox',id:'eo_checkalldates',checked:true
+											,listeners:{
+												check:function(o,b) {
+													if (o.getValue()==true) {
+														Ext.getCmp('eo_fromdate').setReadOnly(true);
+														Ext.getCmp('eo_todate').setReadOnly(true);
+														Ext.getCmp('eo_fromdate').setValue("");
+														Ext.getCmp('eo_todate').setValue("");
+													} else {
+														Ext.getCmp('eo_fromdate').setReadOnly(false);
+														Ext.getCmp('eo_todate').setReadOnly(false);
+													}
+												}
+
+											}
+					},
+					{xtype:'spacer',width:2,height:0},
+					{xtype:'label',html:"<span class='controltext'>Dt from:</span>"},
+					{xtype:'textfield',width:83,id:'eo_fromdate',readOnly:true},
+					{xtype:'spacer',width:2,height:0},
+					{xtype:'label',html:"<span class='controltext'>to:</span>"},
+					{xtype:'textfield',width:83,id:'eo_todate',readOnly:true},
+					{xtype:'spacer',width:4,height:0},
+					{xtype:'button',text:'Load',handler:function(){showOddEvens();}}
+				]
+			});
+			
+		$('#logoutlink').click(function(e){
+			e.preventDefault();
+			$.removeCookie("user");
+			$.removeCookie("pwd");
+			showAlert("Info","Logged out");
+			location.href="http://www.google.com";
+		});
+
+		$('#drawdbselect').change(function(){			
+		});
+		
+		$('#drawdbchangebutton').click(function(){
+			var cc = $('#drawdbselect').val();
+			if (cc==curdb) {
+				showAlert('Info','Selection is already this one.');
+				return;
+			}
+			curdb = cc;
+			$('#alldrawsdiv').empty();
+			emptyProgressTable();
+			var nc = 6;
+			if (curdb=='lottomax') {
+				nc = 7;
+			}
+			setDrawsComponents(nc);
+			loadDraws(function(){
+				loadNumbersDrawnGrid();
+				showHotNumbers();
+				showConsecutiveSeries();
+				showPairingSeries();
+				showOddEvens();
+			});
+		});
+
+		var cu = $.cookie("user");
+		if (cu!="null") {
+			/*
+			var cp = $.cookie("pwd");
+			$.get('/lt/authenticateUser?u='+cu+'&p='+cp+'&junk='+Math.random(),function(x) {
+				if (x=='OK') {
+					showInitData();
+				} else {
+					doLogin();
+				}
+			});
+			*/
+			showInitData();
+		} else {
+			doLogin();
+		}
+	});
+});
+</script>
+</body>
+</html>
